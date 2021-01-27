@@ -34,7 +34,6 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         String breed=intent.getStringExtra("breed");
         String gender=intent.getStringExtra("gender");
         String weight=intent.getStringExtra("weight");
-        p.setId(id);
         p.setName(name);
         p.setBreed(breed);
         p.setGender(gender);

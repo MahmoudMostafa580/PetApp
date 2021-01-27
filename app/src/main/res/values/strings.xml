@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Shelter</string>
+    <string name="unknown">Unknown</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string-array name="gender_spinner">
+        <item>@string/unknown</item>
+        <item>@string/male</item>
+        <item>@string/female</item>
+    </string-array>
+</resources>

@@ -8,7 +8,8 @@
     tools:context=".Login">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        >
         <TextView
             android:id="@+id/shelter_app_text"
             android:layout_width="wrap_content"
@@ -16,6 +17,7 @@
             android:fontFamily="cursive"
             android:textSize="48sp"
             android:text="Shelter App"
+            style="@style/Theme.Shelter"
             android:textStyle="bold"
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,31 +84,44 @@
             android:textAllCaps="false"
             android:textSize="22sp"
             />
+
         <TextView
             android:id="@+id/new_account_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/login_btn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp"
             android:text="New account?"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.343"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/login_btn" />
+
         <TextView
             android:id="@+id/register_text"
+            style="@style/Theme.Shelter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/login_btn"
-            app:layout_constraintStart_toEndOf="@id/new_account_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:text="Register"
+            android:layout_marginTop="20dp"
             android:clickable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:paddingHorizontal="4dp"
-            android:background="@drawable/card_ripple"
+            android:text="Register"
             android:textSize="18sp"
             android:textStyle="bold"
-            style="@style/Theme.Shelter"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.311"
+            app:layout_constraintStart_toEndOf="@id/new_account_text"
+            app:layout_constraintTop_toBottomOf="@id/login_btn" />
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/new_account_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:visibility="invisible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

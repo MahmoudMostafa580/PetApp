@@ -134,7 +134,11 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(),Login.class));
-                finish();
+                //finish();
+                break;
+            case R.id.profile:
+                startActivity(new Intent(MainActivity.this,Profile.class));
+                break;
         }
         return true;
     }

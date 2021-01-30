@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
     <item
-        android:id="@+id/logout"
-        android:title="Logout"
-        app:showAsAction="never"/>
+        app:showAsAction="always"
+        android:id="@+id/main"
+        android:title="Main Menu"
+        android:icon="@drawable/ic_more_vert">
+        <menu>
+            <item
+                android:id="@+id/profile"
+                android:title="Profile"
+                android:icon="@drawable/ic_profile"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/logout"
+                android:title="Logout"
+                app:showAsAction="never"
+                android:icon="@drawable/ic_logout"/>
+
+        </menu>
+    </item>
+
 </menu>

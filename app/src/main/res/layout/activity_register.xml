@@ -58,6 +58,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
         app:placeholderText="@example.com"
+        app:endIconMode="clear_text"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintTop_toBottomOf="@id/fullName_layout"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,6 +79,8 @@
         app:counterEnabled="true"
         app:counterMaxLength="8"
         app:layout_constraintTop_toBottomOf="@id/email_layout"
+        app:endIconMode="password_toggle"
+        app:errorEnabled="true"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" >

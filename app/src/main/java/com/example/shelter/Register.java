@@ -13,10 +13,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Register extends AppCompatActivity {
 
@@ -27,8 +34,10 @@ public class Register extends AppCompatActivity {
     AppCompatButton mRegisterBtn;
     TextView mSignInText;
     ProgressBar mProgressBar;
+    String userId;
 
     FirebaseAuth mAuth;
+    FirebaseFirestore mFireStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +53,7 @@ public class Register extends AppCompatActivity {
         mProgressBar=findViewById(R.id.progress_bar);
 
         mAuth=FirebaseAuth.getInstance();
+        mFireStore=FirebaseFirestore.getInstance();
 
         if (mAuth.getCurrentUser()!=null){
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
@@ -55,6 +65,9 @@ public class Register extends AppCompatActivity {
             public void onClick(View v) {
                 String email=mEmailEditText.getText().toString().trim();
                 String password=mPasswordEditText.getText().toString().trim();
+                String fullName=mFullNameEditText.getText().toString().trim();
+                String phone=mPhoneEditText.getText().toString().trim();
+
                 if (TextUtils.isEmpty(email)){
                     mEmailEditText.setError("Email required");
                     return;
@@ -75,8 +88,27 @@ public class Register extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
-                            Toast.makeText(Register.this, "User created", Toast.LENGTH_SHORT).show();
+
+                            userId=mAuth.getCurrentUser().getUid();
+                            DocumentReference documentReference=mFireStore.collection("users").document(userId);
+                            Map<String,Object> user=new HashMap<>();
+                            user.put("fName",fullName);
+                            user.put("email",email);
+                            user.put("password",password);
+                            user.put("phone",phone);
+                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(Register.this, "User created & Data Saved", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(Register.this, e.toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
                             startActivity(new Intent(Register.this,MainActivity.class));
+
                         }else
                         {
                             Toast.makeText(Register.this, "Error ! : "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();

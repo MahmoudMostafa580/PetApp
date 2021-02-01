@@ -87,6 +87,19 @@
             android:textAllCaps="false"
             android:textSize="22sp"
             />
+        <TextView
+            android:id="@+id/forgetPass_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/login_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/new_account_text"
+            android:text="Forget Password?"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:clickable="true"/>
 
         <TextView
             android:id="@+id/new_account_text"
@@ -98,7 +111,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.343"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/login_btn" />
+            app:layout_constraintTop_toBottomOf="@id/forgetPass_text" />
 
         <TextView
             android:id="@+id/register_text"
@@ -115,7 +128,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.311"
             app:layout_constraintStart_toEndOf="@id/new_account_text"
-            app:layout_constraintTop_toBottomOf="@id/login_btn" />
+            app:layout_constraintTop_toBottomOf="@id/forgetPass_text" />
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
@@ -124,7 +137,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

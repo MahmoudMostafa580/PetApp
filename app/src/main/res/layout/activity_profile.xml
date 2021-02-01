@@ -6,17 +6,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Profile">
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/profile_image"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="20dp"
+        android:scaleType="fitCenter"
+        android:padding="24dp"
+        app:layout_constraintCircleRadius="400dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/profile_background"
         android:clickable="true"
         android:src="@drawable/ic_profile"/>
+    <ImageView
+        android:id="@+id/add_photo"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:src="@drawable/ic_baseline_camera_alt_24"
+        app:layout_constraintBottom_toBottomOf="@id/profile_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        style="@style/Theme.Shelter"
+        app:layout_constraintStart_toStartOf="parent"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/fullName_layout"
@@ -28,7 +45,7 @@
         android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_image">
+        app:layout_constraintTop_toBottomOf="@id/add_photo">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fullName_editText"
@@ -112,5 +129,50 @@
         android:layout_marginTop="20dp"
         android:text="Edit Profile"
         android:textAllCaps="false" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/saveChanges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/phone_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:text="Save Changes"
+        android:visibility="invisible"
+        android:textAllCaps="false" />
+
+    <ImageView
+        android:id="@+id/verify_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="96dp"
+        android:src="@drawable/ic_error"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editProfile_btn" />
+
+    <TextView
+        android:id="@+id/verify_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="Please Verify Account!"
+        android:textColor="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/click_here"
+        app:layout_constraintHorizontal_bias="0.035"
+        app:layout_constraintStart_toEndOf="@id/verify_image"
+        app:layout_constraintTop_toBottomOf="@id/editProfile_btn" />
+    <TextView
+        android:id="@+id/click_here"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/verify_text"
+        app:layout_constraintStart_toEndOf="@id/verify_text"
+        app:layout_constraintBottom_toBottomOf="@id/verify_text"
+        android:text="Click Here"
+        android:layout_marginStart="10dp"
+        style="@style/Theme.Shelter"
+        android:foreground="?attr/selectableItemBackgroundBorderless"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

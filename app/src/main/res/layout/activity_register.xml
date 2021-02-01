@@ -34,14 +34,42 @@
         app:layout_constraintTop_toBottomOf="@id/shelter_app_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <com.google.android.material.textfield.TextInputLayout
+        <ImageView
+            android:id="@+id/register_profile_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registration_text"
+            app:layout_constraintBottom_toTopOf="@id/fullName_layout"
+            android:background="@drawable/profile_background"
+            android:clickable="true"
+            android:src="@drawable/ic_profile"/>
+
+        <ImageView
+            android:id="@+id/add_photo"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:src="@drawable/ic_baseline_camera_alt_24"
+            app:layout_constraintBottom_toBottomOf="@id/register_profile_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.50"
+            style="@style/Theme.Shelter"
+            app:layout_constraintStart_toStartOf="parent"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@+id/register_profile_image"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/fullName_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:layout_constraintTop_toBottomOf="@id/registration_text"
+        app:layout_constraintTop_toBottomOf="@id/register_profile_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         <com.google.android.material.textfield.TextInputEditText

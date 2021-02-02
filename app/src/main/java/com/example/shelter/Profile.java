@@ -33,14 +33,17 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Profile extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 100;
     TextInputLayout mFullName,mEmail,mPassword,mPhone;
     AppCompatButton EditProfile,SaveChanges;
-    ImageView verifyImage;
+    ImageView verifyImageError,verifiedImage;
     ImageView profileImage,addPhoto;
-    TextView verifyText,clickHereText;
+    TextView pleaseVerifyText,clickHereText,verifiedText;
 
     FirebaseAuth mAuth;
     FirebaseFirestore mFirestore;
@@ -59,18 +62,22 @@ public class Profile extends AppCompatActivity {
         mPassword=findViewById(R.id.password_layout);
         mPhone=findViewById(R.id.phone_layout);
         EditProfile=findViewById(R.id.editProfile_btn);
-        verifyImage=findViewById(R.id.verify_image);
-        verifyText=findViewById(R.id.verify_text);
+        verifyImageError=findViewById(R.id.verify_image_error);
+        pleaseVerifyText=findViewById(R.id.please_verify_text);
         clickHereText=findViewById(R.id.click_here);
         SaveChanges=findViewById(R.id.saveChanges);
         addPhoto=findViewById(R.id.add_photo);
+        verifiedImage=findViewById(R.id.verify_image);
+        verifiedText=findViewById(R.id.verify_text);
 
         mAuth=FirebaseAuth.getInstance();
         mFirestore=FirebaseFirestore.getInstance();
         storageReference= FirebaseStorage.getInstance().getReference();
+        user=mAuth.getCurrentUser();
 
         userId=mAuth.getCurrentUser().getUid();
 
+        //getting profile image from firebase
         StorageReference fileRef=storageReference.child("usersPicture/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
         fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -79,7 +86,15 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-        user=mAuth.getCurrentUser();
+        //pick profile image from gallery
+        addPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFileChooser();
+            }
+        });
+
+        //account validation
         if (!user.isEmailVerified()) {
             clickHereText.setOnClickListener(v ->
                     user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -94,12 +109,17 @@ public class Profile extends AppCompatActivity {
                     Toast.makeText(Profile.this, "Email not sent", Toast.LENGTH_SHORT).show();
                 }
             }));
-        }else{
-            verifyImage.setImageResource(R.drawable.ic_verified_user);
-            verifyText.setText("Account verified");
+        }
+        else{
+            verifyImageError.setVisibility(View.INVISIBLE);
+            verifiedImage.setVisibility(View.VISIBLE);
+            pleaseVerifyText.setVisibility(View.INVISIBLE);
+            verifiedText.setVisibility(View.VISIBLE);
             clickHereText.setVisibility(View.GONE);
+
         }
 
+        //retrieve user data from firebase
         DocumentReference documentReference=mFirestore.collection("users").document(userId);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -111,47 +131,69 @@ public class Profile extends AppCompatActivity {
             }
         });
 
+        //enable editTexts to edit it
         EditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addPhoto.setClickable(true);
+                mEmail.setEnabled(true);
                 mFullName.setEnabled(true);
                 mPassword.setEnabled(true);
                 mPhone.setEnabled(true);
-                EditProfile.setVisibility(View.GONE);
+                EditProfile.setVisibility(View.INVISIBLE);
                 SaveChanges.setVisibility(View.VISIBLE);
             }
         });
+
+        //save(update) changes button
         SaveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                if (mFullName.getEditText().getText().toString().isEmpty() || mEmail.getEditText().getText().toString().isEmpty()
+                    || mPassword.getEditText().getText().toString().isEmpty() || mPhone.getEditText().getText().toString().isEmpty()){
+                    Toast.makeText(Profile.this, "Please fill all fields and try again", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                String email=mEmail.getEditText().getText().toString();
+                user.updateEmail(email).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        DocumentReference mDocumentReference=mFirestore.collection("users").document(user.getUid());
+                        Map<String,Object> edited=new HashMap<>();
+                        edited.put("email",email);
+                        edited.put("fName",mFullName.getEditText().getText().toString());
+                        edited.put("password",mPassword.getEditText().getText().toString());
+                        edited.put("phone",mPhone.getEditText().getText().toString());
+                        mDocumentReference.update(edited);
+                        Toast.makeText(Profile.this, "Profile updated", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(Profile.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
-
-        addPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFileChooser();
-            }
-        });
-
     }
+
+    //pick image method
     private void openFileChooser() {
         Intent intent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
 
+    //set profile in it's place
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==PICK_IMAGE_REQUEST && resultCode== Activity.RESULT_OK && data!=null && data.getData()!=null){
             Uri imageUri= data.getData();
-            //profileImage.setImageURI(imageUri);
-            //Picasso.with(this).load(imageUri).fit().centerCrop().into(profileImage);
             uploadImageToFirebase(imageUri);
         }
     }
 
+    //upload image to firebase method
     private void uploadImageToFirebase(Uri imageUri) {
         StorageReference fileRef=storageReference.child("usersPicture/"+mAuth.getCurrentUser().getUid()+"/profile.jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -161,7 +203,7 @@ public class Profile extends AppCompatActivity {
                 fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Picasso.with(Profile.this).load(uri).into(profileImage);
+                        Picasso.with(Profile.this).load(uri).placeholder(R.drawable.ic_profile).into(profileImage);
                     }
                 });
             }

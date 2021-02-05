@@ -10,17 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@android:color/holo_red_dark"
             android:layout_marginTop="20dp"
-            android:background="@drawable/profile_background"
             android:clickable="true"
-            android:padding="24dp"
-            android:scaleType="fitCenter"
             android:src="@drawable/ic_profile"
-            app:layout_constraintCircleRadius="400dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +48,7 @@
             android:enabled="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_photo">
+            app:layout_constraintTop_toBottomOf="@id/please_verify_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/fullName_editText"
@@ -154,10 +152,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="105dp"
             android:src="@drawable/ic_error"
-            app:layout_constraintBottom_toBottomOf="@id/verify_text"
-            app:layout_constraintEnd_toStartOf="@id/verify_text"
+            app:layout_constraintBottom_toBottomOf="@id/please_verify_text"
+            app:layout_constraintEnd_toStartOf="@id/please_verify_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/verify_text" />
+            app:layout_constraintTop_toTopOf="@id/please_verify_text" />
 
         <TextView
             android:id="@+id/please_verify_text"
@@ -169,7 +167,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editProfile_btn"
+            app:layout_constraintTop_toBottomOf="@id/add_photo"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -208,7 +206,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editProfile_btn"
+            app:layout_constraintTop_toBottomOf="@id/add_photo"
             app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

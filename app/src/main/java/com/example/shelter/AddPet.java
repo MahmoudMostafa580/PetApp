@@ -33,6 +33,8 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class AddPet extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     private static final int PICK_IMAGE_REQUEST = 1;
     EditText name_et;
@@ -89,7 +91,7 @@ public class AddPet extends AppCompatActivity implements AdapterView.OnItemSelec
         if (requestCode==PICK_IMAGE_REQUEST && resultCode==RESULT_OK && data!=null && data.getData()!=null){
             mImageUri= data.getData();
             mImageView.setImageURI(mImageUri);
-            Picasso.with(this).load(mImageUri).into(mImageView);
+            Picasso.with(this).load(mImageUri).fit().centerInside().into(mImageView);
         }
     }
 

@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
 
         mStorage= FirebaseStorage.getInstance();
         mDatabaseReference= FirebaseDatabase.getInstance().getReference("pets");
+        mDatabaseReference.keepSynced(true);
         mDBListener = mDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
 
     @Override
     public void OnWhateverClick(int position) {
-        Toast.makeText(this, "Whatever click at position "+position , Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "view details position "+position , Toast.LENGTH_SHORT).show();
 
     }
 
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(),Login.class));
-                //finish();
+                finish();
                 break;
             case R.id.profile:
                 startActivity(new Intent(MainActivity.this,Profile.class));

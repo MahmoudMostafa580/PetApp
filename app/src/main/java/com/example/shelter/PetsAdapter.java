@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -41,10 +43,10 @@ public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder>
         holder.breed_tv.setText(currentPet.getBreed());
         holder.gender_tv.setText(currentPet.getGender());
         holder.weight_tv.setText(currentPet.getWeight());
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(currentPet.getImageUrl())
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .placeholder(R.drawable.pets_launcher_foreground)
-                .fit()
                 .centerInside()
                 .into(holder.imageView);
     }
@@ -87,7 +89,7 @@ public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder>
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.setHeaderTitle("Select Action");
-            MenuItem doWhatever=menu.add(Menu.NONE,1,1,"Do Whatever");
+            MenuItem doWhatever=menu.add(Menu.NONE,1,1,"View details");
             MenuItem delete=menu.add(Menu.NONE,2,2,"Delete");
             doWhatever.setOnMenuItemClickListener(this);
             delete.setOnMenuItemClickListener(this);

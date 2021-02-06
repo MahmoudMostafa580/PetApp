@@ -68,10 +68,10 @@ public class Register extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         mFireStore=FirebaseFirestore.getInstance();
 
-        if (mAuth.getCurrentUser()!=null){
+        /*if (mAuth.getCurrentUser()!=null){
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
             finish();
-        }
+        }*/
 
 
 

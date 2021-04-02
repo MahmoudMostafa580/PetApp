@@ -8,4 +8,6 @@
         <item>@string/male</item>
         <item>@string/female</item>
     </string-array>
+    <string name="facebook_app_id">243687844135788</string>
+    <string name="fb_login_protocol_scheme">fb243687844135788</string>
 </resources>

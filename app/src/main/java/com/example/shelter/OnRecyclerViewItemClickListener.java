@@ -1,7 +1,7 @@
 package com.example.shelter;
 
 public interface OnRecyclerViewItemClickListener {
-    void OnItemClick(int position);
-    void OnWhateverClick(int position);
+    void OnEditClick(int position);
+    void OnViewDetailsClick(int position);
     void OnDeleteClick(int position);
 }

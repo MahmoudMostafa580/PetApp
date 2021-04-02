@@ -3,22 +3,49 @@ package com.example.shelter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class EditPet extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-    EditText name_et;
-    EditText breed_et;
+    ImageView pet_image;
+    TextInputLayout name_et;
+    TextInputLayout breed_et;
     Spinner gender_sp;
-    EditText weight_et;
+    TextInputLayout weight_et;
     String mGender;
-   // MyDatabase myDatabase=new MyDatabase(this);
     Pet p=new Pet();
+
+    String name,breed,gender,weight,imageUrl,petId;
+
+    private FirebaseFirestore mFirestore;
+    private FirebaseAuth mAuth;
+    StorageReference mStorageReference;
+    String userId;
+    DocumentReference documentReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,32 +55,43 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         breed_et=findViewById(R.id.breed_et);
         gender_sp=findViewById(R.id.gender_sp);
         weight_et=findViewById(R.id.measurement_et);
+        pet_image=findViewById(R.id.pet_image);
+
+        mAuth = FirebaseAuth.getInstance();
+        mFirestore = FirebaseFirestore.getInstance();
+        mStorageReference = FirebaseStorage.getInstance().getReference("pets");
+        userId = mAuth.getCurrentUser().getUid();
+        documentReference=mFirestore.collection("users").document(userId).collection("pets").document(p.getPetId());
+
         Intent intent=getIntent();
-        int id=intent.getIntExtra("id",0);
-        String name=intent.getStringExtra("name");
-        String breed=intent.getStringExtra("breed");
-        String gender=intent.getStringExtra("gender");
-        String weight=intent.getStringExtra("weight");
+        name=intent.getStringExtra("name");
+        breed=intent.getStringExtra("breed");
+        gender=intent.getStringExtra("gender");
+        weight=intent.getStringExtra("weight");
+        imageUrl=intent.getStringExtra("imageUrl");
+        petId=intent.getStringExtra("petId");
+
+
         p.setName(name);
         p.setBreed(breed);
         p.setGender(gender);
         p.setWeight(weight);
-        name_et.setText(name);
-        breed_et.setText(breed);
-        //gender_sp.setSelection(getIndex(gender_sp,gender));
+        p.setImageUrl(imageUrl);
+        p.setPetId(documentReference.getId());
 
-        String compareValue=gender;
-        ArrayAdapter spinnerAdapter=ArrayAdapter.createFromResource(this,
-                R.array.gender_spinner,android.R.layout.simple_spinner_item);
+        name_et.getEditText().setText(name);
+        breed_et.getEditText().setText(breed);
+        weight_et.getEditText().setText(weight);
+        ArrayAdapter<CharSequence> spinnerAdapter=ArrayAdapter.createFromResource(this, R.array.gender_spinner,android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         gender_sp.setAdapter(spinnerAdapter);
-        if (compareValue!=null){
-            int spinnerPosition=spinnerAdapter.getPosition(compareValue);
+        if (gender !=null){
+            int spinnerPosition=spinnerAdapter.getPosition(gender);
             gender_sp.setSelection(spinnerPosition);
         }
         gender_sp.setOnItemSelectedListener(this);
+        Glide.with(this).load(imageUrl).into(pet_image);
 
-        weight_et.setText(weight);
     }
 
     @Override
@@ -62,35 +100,44 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         return super.onCreateOptionsMenu(menu);
     }
 
-   /* @Override
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()){
             case R.id.save_edit:
-                String name=name_et.getText().toString().trim();
-                String breed=breed_et.getText().toString().trim();
-                String gender=mGender;
-                String weight=weight_et.getText().toString();
-                p.setName(name);
-                p.setBreed(breed);
-                p.setGender(gender);
-                p.setWeight(weight);
-                if (myDatabase.updatePet(p)){
-                    Toast.makeText(this, "Pet Updated", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(EditPet.this,MainActivity.class));
-                }else
-                    Toast.makeText(this, "Error with updating pet !!", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.delete:
-                if (myDatabase.deletePet(p)){
-                    Toast.makeText(this, "Pet Deleted", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(EditPet.this,MainActivity.class));
-                }else
-                    Toast.makeText(this, "Error with deleting pet !!", Toast.LENGTH_SHORT).show();
+                if (name_et.getEditText().getText()==null || breed_et.getEditText().getText()==null || weight_et.getEditText().getText()==null
+                    ||imageUrl.isEmpty() || gender.isEmpty()){
+                    Toast.makeText(this, "Please fill all fields first !", Toast.LENGTH_SHORT).show();
+                }else{
+                    name=name_et.getEditText().getText().toString();
+                    breed=breed_et.getEditText().getText().toString();
+                    gender=mGender;
+                    weight=weight_et.getEditText().getText().toString();
+
+                    Map<String,Object> pet=new HashMap<>();
+                    pet.put("name",name);
+                    pet.put("breed",breed);
+                    pet.put("gender",gender);
+                    pet.put("weight",weight);
+                    pet.put("imageUrl",imageUrl);
+                    pet.put("petId",petId);
+                    documentReference.update(pet)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(EditPet.this, "Updated successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(EditPet.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 break;
         }
-
         return super.onOptionsItemSelected(item);
-    }*/
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -102,13 +149,5 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
 
     }
 
-    /*private int getIndex(Spinner spinner, String myString){
-        for (int i=0;i<spinner.getCount();i++){
-            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
-                return i;
-            }
-        }
-        return 0;
-    }*/
 
 }

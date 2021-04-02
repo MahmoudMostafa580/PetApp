@@ -12,7 +12,12 @@
         android:roundIcon="@mipmap/pet_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.Shelter">
-        <activity android:name=".Welcome"
+        <activity
+            android:name=".ViewDetails"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            android:label=""/>
+        <activity
+            android:name=".Welcome"
             android:noHistory="true"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
@@ -24,23 +29,43 @@
         <activity
             android:name=".Profile"
             android:label="Your Profile"
-            android:parentActivityName=".MainActivity" >
-        </activity>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".Login"
             android:label="Login"
             android:noHistory="true"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".Register"
             android:noHistory="true"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".AddPet"
             android:label="Add Pet"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".EditPet"
+            android:label="Edit Pet"
+            android:parentActivityName=".MainActivity" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
         </activity>
     </application>
 

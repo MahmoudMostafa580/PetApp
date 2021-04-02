@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -40,9 +39,6 @@ public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder>
     public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
         Pet currentPet=mPets.get(position);
         holder.name_tv.setText(currentPet.getName());
-        holder.breed_tv.setText(currentPet.getBreed());
-        holder.gender_tv.setText(currentPet.getGender());
-        holder.weight_tv.setText(currentPet.getWeight());
         Glide.with(mContext)
                 .load(currentPet.getImageUrl())
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -56,42 +52,26 @@ public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder>
         return mPets.size();
     }
 
-    public class PetViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+    public class PetViewHolder extends RecyclerView.ViewHolder implements
             View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         ImageView imageView;
         TextView name_tv;
-        TextView breed_tv;
-        TextView gender_tv;
-        TextView weight_tv;
 
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView=itemView.findViewById(R.id.image_pet);
             name_tv=itemView.findViewById(R.id.name_txt);
-            breed_tv=itemView.findViewById(R.id.breed_txt);
-            gender_tv=itemView.findViewById(R.id.gender_txt);
-            weight_tv=itemView.findViewById(R.id.weight_txt);
-
-            itemView.setOnClickListener(this);
             itemView.setOnCreateContextMenuListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (mListener!=null){
-                int position= getAdapterPosition();
-                if (position!=RecyclerView.NO_POSITION){
-                    mListener.OnItemClick(position);
-                }
-            }
         }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.setHeaderTitle("Select Action");
-            MenuItem doWhatever=menu.add(Menu.NONE,1,1,"View details");
-            MenuItem delete=menu.add(Menu.NONE,2,2,"Delete");
-            doWhatever.setOnMenuItemClickListener(this);
+            MenuItem view_details=menu.add(Menu.NONE,1,1,"View details");
+            MenuItem edit=menu.add(Menu.NONE,2,2,"Edit");
+            MenuItem delete=menu.add(Menu.NONE,3,3,"Delete");
+            view_details.setOnMenuItemClickListener(this);
+            edit.setOnMenuItemClickListener(this);
             delete.setOnMenuItemClickListener(this);
         }
 
@@ -102,9 +82,12 @@ public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder>
                 if (position!=RecyclerView.NO_POSITION){
                     switch (item.getItemId()){
                         case 1:
-                            mListener.OnWhateverClick(position);
+                            mListener.OnViewDetailsClick(position);
                             return true;
                         case 2:
+                            mListener.OnEditClick(position);
+                            return true;
+                        case 3:
                             mListener.OnDeleteClick(position);
                             return true;
                     }

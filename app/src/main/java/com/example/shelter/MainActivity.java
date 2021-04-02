@@ -1,7 +1,9 @@
 package com.example.shelter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +18,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -27,6 +31,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.snapshot.Index;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -39,95 +51,117 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
     RecyclerView mRecyclerView;
     PetsAdapter mPetsAdapter;
     ProgressBar mProgressBar;
-
-    private DatabaseReference mDatabaseReference;
-    private FirebaseStorage mStorage;
-    private ValueEventListener mDBListener;
     FirebaseAuth mAuth;
+    DocumentReference documentReference;
+    CollectionReference collectionReference;
+    FirebaseFirestore db;
     String userId;
 
-
     private List<Pet> pets;
+    Pet selectedPet=new Pet();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mProgressBar=findViewById(R.id.progressBar);
+        add_pet_btn=findViewById(R.id.add_pet_btn);
+        mRecyclerView=findViewById(R.id.pets_recyclerView);
 
         mAuth=FirebaseAuth.getInstance();
         userId=mAuth.getCurrentUser().getUid();
+        db=FirebaseFirestore.getInstance();
+        documentReference=db.collection("users").document(userId).collection("pets").document();
+        collectionReference=db.collection("users").document(userId).collection("pets");
 
-        add_pet_btn=findViewById(R.id.add_pet_btn);
-        add_pet_btn.setOnClickListener(view ->
-                startActivity(new Intent(MainActivity.this,AddPet.class)));
+        add_pet_btn.setOnClickListener(view -> startActivity(new Intent(MainActivity.this,AddPet.class)));
 
-
-        mRecyclerView=findViewById(R.id.pets_recyclerView);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
 
         pets=new ArrayList<>();
-
         mPetsAdapter=new PetsAdapter(MainActivity.this,pets);
         mRecyclerView.setAdapter(mPetsAdapter);
         mPetsAdapter.setOnItemClickListener(MainActivity.this);
 
+        loadData();
+    }
 
-        mStorage= FirebaseStorage.getInstance();
-        mDatabaseReference= FirebaseDatabase.getInstance().getReference("pets");
-        mDatabaseReference.keepSynced(true);
-        mDBListener = mDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                pets.clear();
-                for (DataSnapshot postSnapshot : snapshot.getChildren()){
-                    Pet pet=postSnapshot.getValue(Pet.class);
-                    pet.setKey(postSnapshot.getKey());
-                    pets.add(pet);
-                }
-                mPetsAdapter.notifyDataSetChanged();
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+    private void loadData() {
+        collectionReference.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    pets.clear();
+                    for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
+                        Pet p=documentSnapshot.toObject(Pet.class);
+                        p.setPetId(documentSnapshot.getId());
+                        pets.add(p);
+                    }
+                    mPetsAdapter.notifyDataSetChanged();
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Error while loading data !", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mDatabaseReference.removeEventListener(mDBListener);
+    public void OnViewDetailsClick(int position) {
+        Intent viewIntent=new Intent(getApplicationContext(),ViewDetails.class);
+        String name=pets.get(position).getName();
+        String breed=pets.get(position).getBreed();
+        String gender=pets.get(position).getGender();
+        String weight=pets.get(position).getWeight();
+        String imageUrl=pets.get(position).getImageUrl();
+        viewIntent.putExtra("name",name);
+        viewIntent.putExtra("breed",breed);
+        viewIntent.putExtra("gender",gender);
+        viewIntent.putExtra("weight",weight);
+        viewIntent.putExtra("image",imageUrl);
+        startActivity(viewIntent);
     }
 
     @Override
-    public void OnItemClick(int position) {
-        Toast.makeText(this, "Normal click at position "+position , Toast.LENGTH_SHORT).show();
-    }
+    public void OnEditClick(int position) {
 
-    @Override
-    public void OnWhateverClick(int position) {
-        Toast.makeText(this, "view details position "+position , Toast.LENGTH_SHORT).show();
-
+        selectedPet=pets.get(position);
+        String selectedKey=selectedPet.getPetId();
+        Intent viewIntent=new Intent(getApplicationContext(),EditPet.class);
+        String name=pets.get(position).getName();
+        String breed=pets.get(position).getBreed();
+        String gender=pets.get(position).getGender();
+        String weight=pets.get(position).getWeight();
+        String imageUrl=pets.get(position).getImageUrl();
+        viewIntent.putExtra("name",name);
+        viewIntent.putExtra("breed",breed);
+        viewIntent.putExtra("gender",gender);
+        viewIntent.putExtra("weight",weight);
+        viewIntent.putExtra("imageUrl",imageUrl);
+        viewIntent.putExtra("petId",selectedKey);
+        startActivity(viewIntent);
     }
 
     @Override
     public void OnDeleteClick(int position) {
-        Pet selectedPet=pets.get(position);
-        String selectedKey=selectedPet.getKey();
-        StorageReference imageRef=mStorage.getReferenceFromUrl(selectedPet.getImageUrl());
-        imageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+        selectedPet=pets.get(position);
+        String selectedKey=selectedPet.getPetId();
+        collectionReference.document(selectedKey).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                mDatabaseReference.child(selectedKey).removeValue();
-                Toast.makeText(MainActivity.this, "Pet Deleted ", Toast.LENGTH_SHORT).show();
+                pets.remove(position);
+                mPetsAdapter.notifyItemRemoved(position);
+                Toast.makeText(MainActivity.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
             }
-        });
-
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
@@ -141,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
         switch (item.getItemId()){
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
+                GoogleSignIn.getClient(this,new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()).signOut();
                 startActivity(new Intent(getApplicationContext(),Login.class));
                 finish();
                 break;

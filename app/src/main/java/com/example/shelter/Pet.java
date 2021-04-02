@@ -8,9 +8,14 @@ public class Pet {
     private String gender;
     private String weight;
     private String imageUrl;
-    private String mKey;
+    private String mPetId;
 
     public Pet() {
+    }
+
+    public Pet(String name, String imageUrl) {
+        this.name = name;
+        this.imageUrl = imageUrl;
     }
 
     public Pet(String name, String breed, String gender, String weight, String imageUrl) {
@@ -63,14 +68,12 @@ public class Pet {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
     @Exclude
-    public String getKey() {
-        return mKey;
+    public String getPetId() {
+        return mPetId;
     }
-
     @Exclude
-    public void setKey(String mKey) {
-        this.mKey = mKey;
+    public void setPetId(String mPetId) {
+        this.mPetId = mPetId;
     }
 }

@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_baseline_search_24"
+        app:showAsAction="always"
+        android:title="search"
+        app:actionViewClass="android.widget.SearchView"/>
     <item
         app:showAsAction="always"
         android:id="@+id/main"
         android:title="Main Menu"
         android:icon="@drawable/ic_more_vert">
         <menu>
+
             <item
                 android:id="@+id/profile"
                 android:title="Profile"
@@ -17,8 +25,10 @@
                 android:title="Logout"
                 app:showAsAction="never"
                 android:icon="@drawable/ic_logout"/>
-
         </menu>
+
     </item>
+
+
 
 </menu>

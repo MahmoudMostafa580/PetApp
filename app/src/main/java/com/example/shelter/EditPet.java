@@ -46,6 +46,7 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
     StorageReference mStorageReference;
     String userId;
     DocumentReference documentReference;
+    CollectionReference collectionReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,8 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         mFirestore = FirebaseFirestore.getInstance();
         mStorageReference = FirebaseStorage.getInstance().getReference("pets");
         userId = mAuth.getCurrentUser().getUid();
-        documentReference=mFirestore.collection("users").document(userId).collection("pets").document(p.getPetId());
+        collectionReference=mFirestore.collection("users").document(userId).collection("pets");
+        //documentReference=mFirestore.collection("users").document(userId).collection("pets").document(p.getPetId());
 
         Intent intent=getIntent();
         name=intent.getStringExtra("name");
@@ -77,7 +79,7 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         p.setGender(gender);
         p.setWeight(weight);
         p.setImageUrl(imageUrl);
-        p.setPetId(documentReference.getId());
+        p.setPetId(petId);
 
         name_et.getEditText().setText(name);
         breed_et.getEditText().setText(breed);
@@ -120,7 +122,24 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
                     pet.put("weight",weight);
                     pet.put("imageUrl",imageUrl);
                     pet.put("petId",petId);
-                    documentReference.update(pet)
+
+                    collectionReference.document(p.getPetId()).update(pet)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(EditPet.this, "Updated successfully", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(EditPet.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+
+
+                    /*documentReference.update(pet)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -132,7 +151,7 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(EditPet.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    });*/
                 }
                 break;
         }

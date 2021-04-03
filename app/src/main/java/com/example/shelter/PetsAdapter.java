@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,16 +18,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder>  {
+public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder> {
     private Context mContext;
     private List<Pet> mPets;
+    //private List<Pet> mFullPets;
     private OnRecyclerViewItemClickListener mListener;
 
     public PetsAdapter(Context context,List<Pet> pets){
         mContext=context;
         mPets=pets;
+       // mFullPets=new ArrayList<>(mPets);
     }
 
     @NonNull
@@ -51,6 +56,37 @@ public class PetsAdapter extends RecyclerView.Adapter<PetsAdapter.PetViewHolder>
     public int getItemCount() {
         return mPets.size();
     }
+
+    /*@Override
+    public Filter getFilter() {
+        return petFilter;
+    }
+    private Filter petFilter=new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Pet> filteredList=new ArrayList<>();
+            if (constraint==null || constraint.length()==0){
+                filteredList.addAll(mFullPets);
+            }else {
+                String filterPattern=constraint.toString().toLowerCase().trim();
+                for (Pet p : mFullPets){
+                    if (p.getName().toLowerCase().contains(filterPattern)){
+                        filteredList.add(p);
+                    }
+                }
+            }
+            FilterResults results=new FilterResults();
+            results.values=filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mPets.clear();
+            mPets.addAll((List)results.values);
+            notifyDataSetChanged();
+        }
+    };*/
 
     public class PetViewHolder extends RecyclerView.ViewHolder implements
             View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {

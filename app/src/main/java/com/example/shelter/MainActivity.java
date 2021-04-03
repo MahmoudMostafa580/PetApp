@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -167,6 +168,60 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu,menu);
+        SearchView searchView=(SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setQueryHint("Search Pets");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //String search=query.toLowerCase();
+                collectionReference.whereEqualTo("name",query).get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                pets.clear();
+                                for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
+                                    Pet p=documentSnapshot.toObject(Pet.class);
+                                    p.setPetId(documentSnapshot.getId());
+                                    pets.add(p);
+                                }
+                                mPetsAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //String search=newText.toLowerCase();
+                collectionReference.whereEqualTo("name",newText).get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                pets.clear();
+                                for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
+                                    Pet p=documentSnapshot.toObject(Pet.class);
+                                    p.setPetId(documentSnapshot.getId());
+                                    pets.add(p);
+                                }
+                                mPetsAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 

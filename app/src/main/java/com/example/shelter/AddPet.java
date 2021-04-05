@@ -11,6 +11,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -37,23 +38,24 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddPet extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class AddPet extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private static final int PICK_IMAGE_REQUEST = 1;
     TextInputLayout name_et;
     TextInputLayout breed_et;
-    Spinner gender_sp;
+    AutoCompleteTextView gender_sp;
     TextInputLayout weight_et;
     String mGender;
     ProgressBar mProgressBar;
     ImageView mImageView;
     private Uri mImageUri;
-    String petId;
 
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
     StorageReference mStorageReference;
     String userId;
     private StorageTask mUploadTask;
+
+    String[] genderSpinner={"Unknown","Male","Female"};
 
 
     @Override
@@ -68,11 +70,10 @@ public class AddPet extends AppCompatActivity implements AdapterView.OnItemSelec
         mImageView = findViewById(R.id.pet_image);
         mProgressBar = findViewById(R.id.progressBar);
 
-        ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.gender_spinner, android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<>(this,android.R.layout.select_dialog_item,genderSpinner);
         gender_sp.setAdapter(spinnerAdapter);
-        gender_sp.setOnItemSelectedListener(this);
+
+        gender_sp.setOnItemClickListener(this);
 
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,12 +195,17 @@ public class AddPet extends AppCompatActivity implements AdapterView.OnItemSelec
             Toast.makeText(this, "No File Selected", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        mGender = adapterView.getSelectedItem().toString();
-    }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+    { mGender = parent.getItemAtPosition(position).toString();}
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<>(this,android.R.layout.select_dialog_item,genderSpinner);
+        gender_sp.setAdapter(spinnerAdapter);
+        gender_sp.setOnItemClickListener(this);
     }
 }

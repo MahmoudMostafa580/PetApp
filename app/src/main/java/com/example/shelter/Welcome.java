@@ -34,7 +34,7 @@ public class Welcome extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
 
         if (restorePrefData()){
-            startActivity(new Intent(Welcome.this,Login.class));
+            startActivity(new Intent(Welcome.this,Register.class));
             finish();
         }
 
@@ -95,7 +95,7 @@ public class Welcome extends AppCompatActivity {
         });
 
         btn_get_started.setOnClickListener(v -> {
-            startActivity(new Intent(Welcome.this,Login.class));
+            startActivity(new Intent(Welcome.this,Register.class));
 
             savePrefData();
         });

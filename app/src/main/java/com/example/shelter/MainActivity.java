@@ -21,8 +21,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
     String userId;
 
     private List<Pet> pets;
+    ArrayList<Pet> listPets;
     Pet selectedPet=new Pet();
 
     @Override
@@ -174,55 +178,46 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //String search=query.toLowerCase();
-                collectionReference.whereEqualTo("name",query).get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                pets.clear();
-                                for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
-                                    Pet p=documentSnapshot.toObject(Pet.class);
-                                    p.setPetId(documentSnapshot.getId());
-                                    pets.add(p);
-                                }
-                                mPetsAdapter.notifyDataSetChanged();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                searchPet(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //String search=newText.toLowerCase();
-                collectionReference.whereEqualTo("name",newText).get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                pets.clear();
-                                for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
-                                    Pet p=documentSnapshot.toObject(Pet.class);
-                                    p.setPetId(documentSnapshot.getId());
-                                    pets.add(p);
-                                }
-                                mPetsAdapter.notifyDataSetChanged();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                searchPet(newText);
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                loadData();
                 return false;
             }
         });
         return super.onCreateOptionsMenu(menu);
+    }
+    private void searchPet(String text){
+        collectionReference.whereEqualTo("name",text).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        pets.clear();
+                        for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
+                            Pet p=documentSnapshot.toObject(Pet.class);
+                            p.setPetId(documentSnapshot.getId());
+                            pets.add(p);
+                        }
+                        mPetsAdapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 
     @Override

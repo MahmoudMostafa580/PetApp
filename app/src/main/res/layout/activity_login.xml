@@ -86,8 +86,7 @@
             android:layout_marginHorizontal="100dp"
             android:text="Login"
             android:textAllCaps="false"
-            android:textSize="22sp"
-            />
+            android:textSize="22sp" />
         <TextView
             android:id="@+id/forgetPass_text"
             android:layout_width="wrap_content"
@@ -95,54 +94,12 @@
             app:layout_constraintTop_toBottomOf="@id/login_btn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/or_text"
             android:text="Forget Password?"
             android:textColor="@android:color/holo_red_dark"
             android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:clickable="true"/>
-        <TextView
-            android:id="@+id/or_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/forgetPass_text"
-            app:layout_constraintBottom_toTopOf="@id/fb_google_layout"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:text="OR"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp"/>
-        <LinearLayout
-            android:id="@+id/fb_google_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="48dp"
-            app:layout_constraintTop_toBottomOf="@id/or_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/new_account_text" >
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/google_sign_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Continue with google"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:drawableStart="@drawable/ic_google"/>
 
-            <com.facebook.login.widget.LoginButton
-                android:id="@+id/login_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginHorizontal="3dp"/>
-        </LinearLayout>
 
         <TextView
             android:id="@+id/new_account_text"
@@ -154,7 +111,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.400"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fb_google_layout" />
+            app:layout_constraintTop_toBottomOf="@id/forgetPass_text" />
 
         <TextView
             android:id="@+id/register_text"
@@ -171,7 +128,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.200"
             app:layout_constraintStart_toEndOf="@id/new_account_text"
-            app:layout_constraintTop_toBottomOf="@id/fb_google_layout" />
+            app:layout_constraintTop_toBottomOf="@id/forgetPass_text" />
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"

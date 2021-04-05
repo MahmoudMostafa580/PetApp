@@ -3,24 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="350dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     tools:context=".ViewDetails">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="ContentDescription"
-        android:scaleType="fitXY"/>
-
-    <TextView
-        android:id="@+id/txt_name"
+        android:padding="5dp"
+        app:civ_border_color="@color/gradient_start_color"
+        app:civ_border_width="2dp"
+        android:layout_marginTop="5dp"
+        android:scaleType="centerCrop"/>
+    <LinearLayout
+        android:id="@+id/name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,64 +31,120 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img"
-        app:layout_constraintVertical_bias="0.0"
         android:layout_marginTop="20dp"
-        android:textAlignment="center"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        android:text="Name: Cat"/>
+        app:layout_constraintVertical_bias="0.0"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:paddingStart="10dp"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/pet_launcher_background"
+            android:text="Name: "/>
+        <TextView
+            android:id="@+id/txt_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/txt_breed"
+    <LinearLayout
+        android:id="@+id/breed_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_name"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/name_layout"
         android:layout_marginTop="20dp"
-        android:textAlignment="center"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        android:text="Name: Cat"/>
+        app:layout_constraintVertical_bias="0.0"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:paddingStart="10dp"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/pet_launcher_background"
+            android:text="Breed: "/>
+        <TextView
+            android:id="@+id/txt_breed"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/txt_gender"
+    <LinearLayout
+        android:id="@+id/gender_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_breed"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/breed_layout"
         android:layout_marginTop="20dp"
-        android:textAlignment="center"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        android:text="Name: Cat"/>
+        app:layout_constraintVertical_bias="0.0"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:paddingStart="10dp"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/pet_launcher_background"
+            android:text="Gender: "/>
+        <TextView
+            android:id="@+id/txt_gender"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/txt_weight"
+    <LinearLayout
+        android:id="@+id/weight_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txt_gender"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/gender_layout"
         android:layout_marginTop="20dp"
-        android:textAlignment="center"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="Name: Cat"/>
+        android:layout_marginBottom="10dp"
+        app:layout_constraintVertical_bias="0.0"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:paddingStart="10dp"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/pet_launcher_background"
+            android:text="Weight: "/>
+        <TextView
+            android:id="@+id/txt_weight"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

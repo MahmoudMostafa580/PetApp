@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -30,11 +31,11 @@ import com.google.firebase.storage.StorageReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditPet extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class EditPet extends AppCompatActivity implements AdapterView.OnItemClickListener{
     ImageView pet_image;
     TextInputLayout name_et;
     TextInputLayout breed_et;
-    Spinner gender_sp;
+    AutoCompleteTextView gender_sp;
     TextInputLayout weight_et;
     String mGender;
     Pet p=new Pet();
@@ -45,8 +46,9 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
     private FirebaseAuth mAuth;
     StorageReference mStorageReference;
     String userId;
-    DocumentReference documentReference;
     CollectionReference collectionReference;
+
+    String[] genderSpinner={"Unknown","Male","Female"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,9 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         mStorageReference = FirebaseStorage.getInstance().getReference("pets");
         userId = mAuth.getCurrentUser().getUid();
         collectionReference=mFirestore.collection("users").document(userId).collection("pets");
-        //documentReference=mFirestore.collection("users").document(userId).collection("pets").document(p.getPetId());
+
+        ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<>(this, android.R.layout.select_dialog_item, genderSpinner);
+        gender_sp.setAdapter(spinnerAdapter);
 
         Intent intent=getIntent();
         name=intent.getStringExtra("name");
@@ -84,14 +88,15 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         name_et.getEditText().setText(name);
         breed_et.getEditText().setText(breed);
         weight_et.getEditText().setText(weight);
-        ArrayAdapter<CharSequence> spinnerAdapter=ArrayAdapter.createFromResource(this, R.array.gender_spinner,android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        gender_sp.setAdapter(spinnerAdapter);
-        if (gender !=null){
-            int spinnerPosition=spinnerAdapter.getPosition(gender);
+        gender_sp.setText(gender);
+
+        /*if (p.getGender() !=null){
+            int spinnerPosition=spinnerAdapter.getPosition(p.getGender());
+            gender_sp.setText(gender);
             gender_sp.setSelection(spinnerPosition);
-        }
-        gender_sp.setOnItemSelectedListener(this);
+        }*/
+        gender_sp.setOnItemClickListener(this);
+
         Glide.with(this).load(imageUrl).into(pet_image);
 
     }
@@ -107,12 +112,12 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
         switch (item.getItemId()){
             case R.id.save_edit:
                 if (name_et.getEditText().getText()==null || breed_et.getEditText().getText()==null || weight_et.getEditText().getText()==null
-                    ||imageUrl.isEmpty() || gender.isEmpty()){
+                    ||imageUrl.isEmpty() ||gender==null){
                     Toast.makeText(this, "Please fill all fields first !", Toast.LENGTH_SHORT).show();
                 }else{
                     name=name_et.getEditText().getText().toString();
                     breed=breed_et.getEditText().getText().toString();
-                    gender=mGender;
+                    gender=gender_sp.getText().toString();
                     weight=weight_et.getEditText().getText().toString();
 
                     Map<String,Object> pet=new HashMap<>();
@@ -136,37 +141,25 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemSele
                                     Toast.makeText(EditPet.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
-
-
-
-                    /*documentReference.update(pet)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(EditPet.this, "Updated successfully", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(EditPet.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
                 }
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        mGender=adapterView.getSelectedItem().toString();
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mGender=parent.getItemAtPosition(position).toString();
+        gender_sp.setText(mGender);
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
+    protected void onResume() {
+        super.onResume();
+        ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<>(this,android.R.layout.select_dialog_item,genderSpinner);
+        gender_sp.setAdapter(spinnerAdapter);
+        gender_sp.setOnItemClickListener(this);
     }
-
 
 }

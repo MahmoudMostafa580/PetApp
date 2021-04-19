@@ -20,7 +20,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="ContentDescription" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/name_et"
@@ -29,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="16dp"
-            android:hint="Name"
+            android:hint="@string/Name"
             android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,7 +40,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:singleLine="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -49,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="20dp"
-            android:hint="Breed"
+            android:hint="@string/Breed"
             android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +62,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:singleLine="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -80,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:inputType="none"
-                android:hint="Gender"
+                android:hint="@string/Gender"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -92,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="20dp"
-            android:hint="Weight"
+            android:hint="@string/Weight"
             android:inputType="number"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -102,14 +105,15 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:singleLine="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="36dp"
-            android:text="Kg"
+            android:text="@string/kg"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@id/measurement_et"
             app:layout_constraintEnd_toEndOf="parent"

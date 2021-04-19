@@ -60,7 +60,7 @@
         android:layout_height="42dp"
         android:background="@drawable/get_started_btn_back_ground"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:text="Get Started"
+        android:text="@string/get_started"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

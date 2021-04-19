@@ -3,6 +3,7 @@ package com.example.shelter;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ public class ViewDetails extends AppCompatActivity {
     AppCompatImageView img;
     TextView name_tv, breed_tv, gender_tv, weight_tv;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +36,6 @@ public class ViewDetails extends AppCompatActivity {
         String gender=intent.getStringExtra("gender");
         String weight=intent.getStringExtra("weight");
         String imageUrl=intent.getStringExtra("image");
-
 
         Glide.with(this).load(imageUrl).diskCacheStrategy(DiskCacheStrategy.DATA).into(img);
         name_tv.setText(name);

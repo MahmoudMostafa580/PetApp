@@ -51,6 +51,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -100,85 +101,58 @@ public class Register extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(),MainActivity.class));
             finish();
         }
-        mRegisterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email=mEmailEditText.getText().toString().trim();
-                String password=mPasswordEditText.getText().toString().trim();
-                String fullName=mFullNameEditText.getText().toString().trim();
-                String phone=mPhoneEditText.getText().toString().trim();
+        mRegisterBtn.setOnClickListener(v -> {
+            String email= Objects.requireNonNull(mEmailEditText.getText()).toString().trim();
+            String password= Objects.requireNonNull(mPasswordEditText.getText()).toString().trim();
+            String fullName= Objects.requireNonNull(mFullNameEditText.getText()).toString().trim();
+            String phone= Objects.requireNonNull(mPhoneEditText.getText()).toString().trim();
 
-                if (TextUtils.isEmpty(email)){
-                    mEmailEditText.setError("Email required");
-                    return;
-                }
-                if (TextUtils.isEmpty(password)){
-                    mPasswordEditText.setError("Password required");
-                    return;
-                }
-                if (password.length()<8){
-                    mPasswordEditText.setError("Password must be 8 chars or more");
-                    return;
-                }
-
-                mProgressBar.setVisibility(View.VISIBLE);
-
-                //Registration process
-                mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-
-                            FirebaseUser fUser=mAuth.getCurrentUser();
-                            fUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(Register.this, "Verification has been sent \n Please check your mail",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Register.this, "Email not sent", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            userId=mAuth.getCurrentUser().getUid();
-                            DocumentReference documentReference=mFireStore.collection("users").document(userId);
-                            Map<String,Object> user=new HashMap<>();
-                            user.put("fName",fullName);
-                            user.put("email",email);
-                            user.put("password",password);
-                            user.put("phone",phone);
-                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(Register.this, "User created & Data Saved", Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Register.this, e.toString(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            startActivity(new Intent(Register.this,MainActivity.class));
-
-                        }else
-                        {
-                            Toast.makeText(Register.this, "Error ! : "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            mProgressBar.setVisibility(View.GONE);
-                        }
-                    }
-                });
-
+            if (TextUtils.isEmpty(email)){
+                mEmailEditText.setError("Email required");
+                return;
             }
-        });
-        mSignInText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Register.this,Login.class));
+            if (TextUtils.isEmpty(password)){
+                mPasswordEditText.setError("Password required");
+                return;
             }
+            if (password.length()<8){
+                mPasswordEditText.setError("Password must be 8 chars or more");
+                return;
+            }
+
+            mProgressBar.setVisibility(View.VISIBLE);
+
+            //Registration process
+            mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()){
+
+                    FirebaseUser fUser=mAuth.getCurrentUser();
+                    fUser.sendEmailVerification().addOnSuccessListener(aVoid -> Toast.makeText(Register.this, "Verification has been sent \n Please check your mail",
+                            Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(Register.this, "Email not sent", Toast.LENGTH_SHORT).show());
+
+                    userId=mAuth.getCurrentUser().getUid();
+                    DocumentReference documentReference=mFireStore.collection("users").document(userId);
+                    Map<String,Object> user=new HashMap<>();
+                    user.put("fName",fullName);
+                    user.put("email",email);
+                    user.put("password",password);
+                    user.put("phone",phone);
+                    documentReference.set(user)
+                            .addOnSuccessListener(aVoid ->
+                            Toast.makeText(Register.this, "User created & Data Saved", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(Register.this, e.toString(), Toast.LENGTH_SHORT).show());
+                    startActivity(new Intent(Register.this,MainActivity.class));
+
+                }else
+                {
+                    Toast.makeText(Register.this, "Error ! : "+ Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            });
+
         });
+        mSignInText.setOnClickListener(v -> startActivity(new Intent(Register.this,Login.class)));
 
         /*
          *Login with google account
@@ -190,36 +164,28 @@ public class Register extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         GoogleSignInAccount signInAccount=GoogleSignIn.getLastSignedInAccount(this);
 
-        google_sign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn();
-            }
-        });
+        google_sign.setOnClickListener(v -> signIn());
 
 
-        facebook_sign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(Register.this, Arrays.asList("email", "public_profile"));
-                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        Log.d("TAG", "facebook:onSuccess:" + loginResult);
-                        handleFacebookAccessToken(loginResult.getAccessToken());
-                    }
+        facebook_sign.setOnClickListener(v -> {
+            LoginManager.getInstance().logInWithReadPermissions(Register.this, Arrays.asList("email", "public_profile"));
+            LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    Log.d("TAG", "facebook:onSuccess:" + loginResult);
+                    handleFacebookAccessToken(loginResult.getAccessToken());
+                }
 
-                    @Override
-                    public void onCancel() {
-                        Log.d("TAG", "facebook:onCancel");
-                    }
+                @Override
+                public void onCancel() {
+                    Log.d("TAG", "facebook:onCancel");
+                }
 
-                    @Override
-                    public void onError(FacebookException error) {
-                        Log.d("TAG", "facebook:onError", error);
-                    }
-                });
-            }
+                @Override
+                public void onError(FacebookException error) {
+                    Log.d("TAG", "facebook:onError", error);
+                }
+            });
         });
     }
 
@@ -242,6 +208,7 @@ public class Register extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Toast.makeText(this, "Login successfully", Toast.LENGTH_SHORT).show();
+                assert account != null;
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
@@ -251,21 +218,19 @@ public class Register extends AppCompatActivity {
         }
     }
 
+
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(Register.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Toast.makeText(Register.this, Objects.requireNonNull(task.getException()).toString(), Toast.LENGTH_SHORT).show();
+                        updateUI(null);
                     }
                 });
     }
@@ -275,21 +240,18 @@ public class Register extends AppCompatActivity {
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("TAG", "signInWithCredential:success");
-                            Toast.makeText(Register.this, "Facebook login successfully", Toast.LENGTH_SHORT).show();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("TAG", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(Register.this, "Facebook login failed", Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d("TAG", "signInWithCredential:success");
+                        Toast.makeText(Register.this, "Facebook login successfully", Toast.LENGTH_SHORT).show();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w("TAG", "signInWithCredential:failure", task.getException());
+                        Toast.makeText(Register.this, "Facebook login failed", Toast.LENGTH_SHORT).show();
+                        updateUI(null);
                     }
                 });
     }
@@ -301,7 +263,7 @@ public class Register extends AppCompatActivity {
         }
     }
 
-    @Override
+    /*@Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
@@ -309,5 +271,5 @@ public class Register extends AppCompatActivity {
         if(currentUser!=null){
             updateUI(currentUser);
         }
-    }
+    }*/
 }

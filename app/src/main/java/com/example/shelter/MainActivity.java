@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -48,6 +50,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity implements OnRecyclerViewItemClickListener {
@@ -55,14 +58,16 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
     RecyclerView mRecyclerView;
     PetsAdapter mPetsAdapter;
     ProgressBar mProgressBar;
+    SwipeRefreshLayout swipeRefreshLayout;
     FirebaseAuth mAuth;
     DocumentReference documentReference;
     CollectionReference collectionReference;
     FirebaseFirestore db;
+    StorageReference storageReference;
+    FirebaseStorage mStorage;
     String userId;
 
     private List<Pet> pets;
-    ArrayList<Pet> listPets;
     Pet selectedPet=new Pet();
 
     @Override
@@ -72,12 +77,15 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
         mProgressBar=findViewById(R.id.progressBar);
         add_pet_btn=findViewById(R.id.add_pet_btn);
         mRecyclerView=findViewById(R.id.pets_recyclerView);
+        swipeRefreshLayout=findViewById(R.id.swipe_refresh);
 
         mAuth=FirebaseAuth.getInstance();
-        userId=mAuth.getCurrentUser().getUid();
+        userId= Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         db=FirebaseFirestore.getInstance();
         documentReference=db.collection("users").document(userId).collection("pets").document();
         collectionReference=db.collection("users").document(userId).collection("pets");
+        storageReference=FirebaseStorage.getInstance().getReference("pets");
+        mStorage=FirebaseStorage.getInstance();
 
         add_pet_btn.setOnClickListener(view -> startActivity(new Intent(MainActivity.this,AddPet.class)));
 
@@ -90,6 +98,12 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
         mPetsAdapter.setOnItemClickListener(MainActivity.this);
 
         loadData();
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadData();
+            mPetsAdapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+        });
     }
 
     private void loadData() {
@@ -104,12 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
                     mPetsAdapter.notifyDataSetChanged();
                     mProgressBar.setVisibility(View.INVISIBLE);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Error while loading data !", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error while loading data !", Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -153,20 +162,15 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
         selectedPet=pets.get(position);
         String selectedKey=selectedPet.getPetId();
         collectionReference.document(selectedKey).delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                pets.remove(position);
-                mPetsAdapter.notifyItemRemoved(position);
-                Toast.makeText(MainActivity.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnSuccessListener(aVoid -> {
+                    pets.remove(position);
+                    mPetsAdapter.notifyItemRemoved(position);
+                    StorageReference petsStorage=mStorage.getReferenceFromUrl(selectedPet.getImageUrl());
+                    petsStorage.delete()
+                            .addOnSuccessListener(aVoid1 -> Toast.makeText(MainActivity.this, "Deleted Successfully", Toast.LENGTH_SHORT).show())
+                            .addOnFailureListener(e -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
+                })
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -188,38 +192,28 @@ public class MainActivity extends AppCompatActivity implements OnRecyclerViewIte
                 return false;
             }
         });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                loadData();
-                return false;
-            }
+        searchView.setOnCloseListener(() -> {
+            loadData();
+            return false;
         });
         return super.onCreateOptionsMenu(menu);
     }
     private void searchPet(String text){
         collectionReference.whereEqualTo("name",text).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        pets.clear();
-                        for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
-                            Pet p=documentSnapshot.toObject(Pet.class);
-                            p.setPetId(documentSnapshot.getId());
-                            pets.add(p);
-                        }
-                        mPetsAdapter.notifyDataSetChanged();
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    pets.clear();
+                    for (QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots){
+                        Pet p=documentSnapshot.toObject(Pet.class);
+                        p.setPetId(documentSnapshot.getId());
+                        pets.add(p);
                     }
+                    mPetsAdapter.notifyDataSetChanged();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
 
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){

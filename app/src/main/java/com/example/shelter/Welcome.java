@@ -104,8 +104,7 @@ public class Welcome extends AppCompatActivity {
 
     private boolean restorePrefData() {
         SharedPreferences pref=getApplicationContext().getSharedPreferences("myPref",MODE_PRIVATE);
-        Boolean isOpened=pref.getBoolean("isIntroOpened",false);
-        return isOpened;
+        return pref.getBoolean("isIntroOpened",false);
     }
 
     private void savePrefData() {

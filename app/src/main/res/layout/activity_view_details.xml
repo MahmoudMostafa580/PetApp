@@ -6,7 +6,6 @@
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     tools:context=".ViewDetails">
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/img"
         android:layout_width="200dp"
@@ -22,129 +21,178 @@
         app:civ_border_width="2dp"
         android:layout_marginTop="5dp"
         android:scaleType="centerCrop"/>
-    <LinearLayout
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/name_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img"
-        android:layout_marginTop="20dp"
-        app:layout_constraintVertical_bias="0.0"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:paddingStart="10dp"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/pet_launcher_background"
-            android:text="Name: "/>
-        <TextView
-            android:id="@+id/txt_name"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.0">
 
-    <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/name"
+                android:textColor="@color/pet_launcher_background"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="32sp"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/breed_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name_layout"
-        android:layout_marginTop="20dp"
-        app:layout_constraintVertical_bias="0.0"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:paddingStart="10dp"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/pet_launcher_background"
-            android:text="Breed: "/>
-        <TextView
-            android:id="@+id/txt_breed"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.0">
 
-    <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/breed"
+                android:textColor="@color/pet_launcher_background"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_breed"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="32sp"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/gender_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/breed_layout"
-        android:layout_marginTop="20dp"
-        app:layout_constraintVertical_bias="0.0"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:paddingStart="10dp"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/pet_launcher_background"
-            android:text="Gender: "/>
-        <TextView
-            android:id="@+id/txt_gender"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.0">
 
-    <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/gender"
+                android:textColor="@color/pet_launcher_background"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_gender"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="32sp"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/weight_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gender_layout"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintVertical_bias="0.0"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textAlignment="textStart"
-            android:paddingStart="10dp"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/pet_launcher_background"
-            android:text="Weight: "/>
-        <TextView
-            android:id="@+id/txt_weight"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintVertical_bias="0.0"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:textColor="@color/pet_launcher_background"
+                android:text="@string/weight"/>
+            <TextView
+                android:id="@+id/txt_weight"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="32sp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

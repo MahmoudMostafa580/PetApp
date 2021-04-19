@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AddPet extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -70,17 +71,13 @@ public class AddPet extends AppCompatActivity implements AdapterView.OnItemClick
         mImageView = findViewById(R.id.pet_image);
         mProgressBar = findViewById(R.id.progressBar);
 
+        mProgressBar.setVisibility(View.INVISIBLE);
+
         ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<>(this,android.R.layout.select_dialog_item,genderSpinner);
         gender_sp.setAdapter(spinnerAdapter);
-
         gender_sp.setOnItemClickListener(this);
 
-        mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFileChooser();
-            }
-        });
+        mImageView.setOnClickListener(v -> openFileChooser());
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
@@ -112,14 +109,12 @@ public class AddPet extends AppCompatActivity implements AdapterView.OnItemClick
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.save:
-                if (mUploadTask != null && mUploadTask.isInProgress()) {
-                    Toast.makeText(AddPet.this, "Upload in progress", Toast.LENGTH_SHORT).show();
-                } else {
-                    uploadPet();
-                }
-                break;
+        if (item.getItemId() == R.id.save) {
+            if (mUploadTask != null && mUploadTask.isInProgress()) {
+                Toast.makeText(AddPet.this, "Upload in progress", Toast.LENGTH_SHORT).show();
+            } else {
+                uploadPet();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -133,62 +128,34 @@ public class AddPet extends AppCompatActivity implements AdapterView.OnItemClick
     private void uploadPet() {
         if (mImageUri != null) {
 
-            StorageReference fileReference = mStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(mImageUri));
+            StorageReference fileReference = mStorageReference.child(System.currentTimeMillis()+"."+getFileExtension(mImageUri));
             mUploadTask = fileReference.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            fileReference.getDownloadUrl()
-                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mProgressBar.setProgress(0);
-                                        }
-                                    }, 500);
+                    .addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                                Handler handler = new Handler();
+                                handler.postDelayed(() -> mProgressBar.setProgress(0), 500);
 
-                                    String name = name_et.getEditText().getText().toString().trim();
-                                    String breed = breed_et.getEditText().getText().toString().trim();
-                                    String gender = mGender;
-                                    String weight = weight_et.getEditText().getText().toString();
-                                    Pet p=new Pet(name,breed,gender,weight,uri.toString());
+                                String name = Objects.requireNonNull(name_et.getEditText()).getText().toString().trim();
+                                String breed = Objects.requireNonNull(breed_et.getEditText()).getText().toString().trim();
+                                String gender = mGender;
+                                String weight = Objects.requireNonNull(weight_et.getEditText()).getText().toString();
+                                Pet p=new Pet(name,breed,gender,weight,uri.toString());
 
-                                    userId = mAuth.getCurrentUser().getUid();
-                                    CollectionReference collectionReference = mFirestore.collection("users").document(userId).collection("pets");
-                                    collectionReference.add(p)
-                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                @Override
-                                                public void onSuccess(DocumentReference documentReference) {
-                                                    Toast.makeText(AddPet.this, "Data Uploaded Successfully", Toast.LENGTH_SHORT).show();
-                                                    startActivity(new Intent(AddPet.this,MainActivity.class));
-                                                    finish();
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(AddPet.this, e.toString(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddPet.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                            double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
+                                userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+                                CollectionReference collectionReference = mFirestore.collection("users").document(userId).collection("pets");
+                                collectionReference.add(p)
+                                        .addOnSuccessListener(documentReference -> {
+                                            Toast.makeText(AddPet.this, "Data Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(AddPet.this,MainActivity.class));
+                                            finish();
+                                        })
+                                        .addOnFailureListener(e -> Toast.makeText(AddPet.this, e.toString(), Toast.LENGTH_SHORT).show());
+                            }))
+                    .addOnFailureListener(e -> Toast.makeText(AddPet.this, e.getMessage(), Toast.LENGTH_SHORT).show())
+                    .addOnProgressListener(snapshot -> {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                        mProgressBar.setProgress((int) progress);
                     });
         }
         else

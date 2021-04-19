@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:fontFamily="cursive"
-            android:text="Shelter App"
+            android:text="@string/shelter_app"
             android:textSize="48sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/registration_text"
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Registration"
+            android:text="@string/registration"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +54,7 @@
                 android:id="@+id/fullName_editText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Full Name"
+                android:hint="@string/full_name"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -76,7 +76,7 @@
                 android:id="@+id/email_editText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,7 +100,7 @@
                 android:id="@+id/password_editText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -120,7 +120,7 @@
                 android:id="@+id/phone_editText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Phone"
+                android:hint="@string/phone"
                 android:inputType="phone" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="100dp"
             android:layout_marginTop="20dp"
-            android:text="Register"
+            android:text="@string/register_btn"
             android:textAllCaps="false"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -142,7 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="OR"
+            android:text="@string/or"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -188,7 +188,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
-            android:text="Already have account?"
+            android:text="@string/already_have_account"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.365"
@@ -205,7 +205,7 @@
             android:clickable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:paddingHorizontal="4dp"
-            android:text="Sign in"
+            android:text="@string/sign_in"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

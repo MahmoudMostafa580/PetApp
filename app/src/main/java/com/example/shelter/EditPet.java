@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class EditPet extends AppCompatActivity implements AdapterView.OnItemClickListener{
     ImageView pet_image;
@@ -37,6 +39,7 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemClic
     TextInputLayout breed_et;
     AutoCompleteTextView gender_sp;
     TextInputLayout weight_et;
+    ProgressBar mProgressBar;
     String mGender;
     Pet p=new Pet();
 
@@ -59,11 +62,14 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemClic
         gender_sp=findViewById(R.id.gender_sp);
         weight_et=findViewById(R.id.measurement_et);
         pet_image=findViewById(R.id.pet_image);
+        mProgressBar = findViewById(R.id.progressBar);
+
+        mProgressBar.setVisibility(View.INVISIBLE);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
         mStorageReference = FirebaseStorage.getInstance().getReference("pets");
-        userId = mAuth.getCurrentUser().getUid();
+        userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         collectionReference=mFirestore.collection("users").document(userId).collection("pets");
 
         ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<>(this, android.R.layout.select_dialog_item, genderSpinner);
@@ -85,16 +91,11 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemClic
         p.setImageUrl(imageUrl);
         p.setPetId(petId);
 
-        name_et.getEditText().setText(name);
-        breed_et.getEditText().setText(breed);
-        weight_et.getEditText().setText(weight);
+        Objects.requireNonNull(name_et.getEditText()).setText(name);
+        Objects.requireNonNull(breed_et.getEditText()).setText(breed);
+        Objects.requireNonNull(weight_et.getEditText()).setText(weight);
         gender_sp.setText(gender);
 
-        /*if (p.getGender() !=null){
-            int spinnerPosition=spinnerAdapter.getPosition(p.getGender());
-            gender_sp.setText(gender);
-            gender_sp.setSelection(spinnerPosition);
-        }*/
         gender_sp.setOnItemClickListener(this);
 
         Glide.with(this).load(imageUrl).into(pet_image);
@@ -109,40 +110,28 @@ public class EditPet extends AppCompatActivity implements AdapterView.OnItemClic
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.save_edit:
-                if (name_et.getEditText().getText()==null || breed_et.getEditText().getText()==null || weight_et.getEditText().getText()==null
-                    ||imageUrl.isEmpty() ||gender==null){
-                    Toast.makeText(this, "Please fill all fields first !", Toast.LENGTH_SHORT).show();
-                }else{
-                    name=name_et.getEditText().getText().toString();
-                    breed=breed_et.getEditText().getText().toString();
-                    gender=gender_sp.getText().toString();
-                    weight=weight_et.getEditText().getText().toString();
+        if (item.getItemId() == R.id.save_edit) {
+            if (Objects.requireNonNull(name_et.getEditText()).getText() == null || Objects.requireNonNull(breed_et.getEditText()).getText() == null || Objects.requireNonNull(weight_et.getEditText()).getText() == null
+                    || imageUrl.isEmpty() || gender == null) {
+                Toast.makeText(this, "Please fill all fields first !", Toast.LENGTH_SHORT).show();
+            } else {
+                name = name_et.getEditText().getText().toString();
+                breed = breed_et.getEditText().getText().toString();
+                gender = gender_sp.getText().toString();
+                weight = weight_et.getEditText().getText().toString();
 
-                    Map<String,Object> pet=new HashMap<>();
-                    pet.put("name",name);
-                    pet.put("breed",breed);
-                    pet.put("gender",gender);
-                    pet.put("weight",weight);
-                    pet.put("imageUrl",imageUrl);
-                    pet.put("petId",petId);
+                Map<String, Object> pet = new HashMap<>();
+                pet.put("name", name);
+                pet.put("breed", breed);
+                pet.put("gender", gender);
+                pet.put("weight", weight);
+                pet.put("imageUrl", imageUrl);
+                pet.put("petId", petId);
 
-                    collectionReference.document(p.getPetId()).update(pet)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(EditPet.this, "Updated successfully", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(EditPet.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-                break;
+                collectionReference.document(p.getPetId()).update(pet)
+                        .addOnSuccessListener(aVoid -> Toast.makeText(EditPet.this, "Updated successfully", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(EditPet.this, e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
         }
         return super.onOptionsItemSelected(item);
     }

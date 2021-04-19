@@ -10,4 +10,36 @@
     </string-array>
     <string name="facebook_app_id">1189689924835235</string>
     <string name="fb_login_protocol_scheme">fb1189689924835235</string>
+    <string name="get_started">Get Started</string>
+    <string name="shelter_app">Shelter App</string>
+    <string name="login_txt">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login_btn">Login</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="new_account">New account?</string>
+    <string name="register_txt">Register</string>
+    <string name="registration">Registration</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone">Phone</string>
+    <string name="register_btn">Register</string>
+    <string name="or">OR</string>
+    <string name="already_have_account">Already have account?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="name">Name:</string>
+    <string name="breed">Breed:</string>
+    <string name="gender">Gender:</string>
+    <string name="weight">Weight:</string>
+    <string name="please_verify_account">Please Verify Account!</string>
+    <string name="click_here">Click Here</string>
+    <string name="title">title</string>
+    <string name="description">description</string>
+    <string name="Breed">Breed</string>
+    <string name="Name">Name</string>
+    <string name="Gender">Gender</string>
+    <string name="Weight">Weight</string>
+    <string name="kg">Kg</string>
+    <string name="account_verified">Account verified</string>
+
+
 </resources>
